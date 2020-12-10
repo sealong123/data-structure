@@ -1,0 +1,144 @@
+#include<iostream>
+using namespace std;
+typedef struct edgenode{
+	int index;
+	int val;
+	edgenode *next;
+}edgenode;
+typedef struct vnode{
+	edgenode *head;
+}vnode,vlist[1000];
+typedef struct qnode{
+	int data;
+	qnode *next;
+}qnode;
+void create(vlist list,int e,int *count){
+	int i,num1,ind,val;
+	for(i = 0;i < e;i++){
+		cin>>num1>>ind>>val;
+		edgenode *p = new edgenode;
+		p->index = ind;
+		p->val = val;
+		p->next = list[num1].head->next;
+		list[num1].head->next = p;
+		count[ind]++;
+	}
+	return;
+}
+int topsort(vlist list,int *count,int n,qnode *head,qnode *tail,int *store){
+	int i,j = 0;
+	for(i = 1;i <= n;i++){
+		if(count[i] == 0){
+			qnode *p = new qnode;
+			p->data = i;
+			p->next = tail->next;
+			tail->next = p;
+			tail = p;
+		}
+	}
+	int k;
+	for(k = 1;k <= n;k++){
+		if(head == tail){
+			cout<<"unworkable project"<<endl;
+			return 0;
+		}
+		else{
+			store[++j] = head->next->data;
+			head->next = head->next->next;
+			if(head->next == NULL)tail = head;
+			int num1 = store[j];
+			edgenode *p = list[num1].head->next;
+			while(p){
+				count[p->index]--;
+				if(count[p->index] == 0){
+					qnode *q = new qnode;
+					q->data = p->index;
+					qnode *temp = head;
+					while(temp->next && temp->next->data < q->data)temp = temp->next;
+					q->next = temp->next;
+					if(temp == tail)tail = q;
+					temp->next = q;
+				}
+				p = p->next;
+			}
+		}
+	}
+	return 1;
+}
+void criticalpath(vlist list,int *store,int n,vlist list2,int &count){
+	int ve[1000] = {0},vl[1000];
+	int i;
+	for(i = 1;i <= n;i++){
+		int j = store[i];
+		edgenode *p = list[j].head->next;
+		while(p){
+			if(ve[j] + p->val > ve[p->index])ve[p->index] = ve[j] + p->val;
+			p = p->next;
+		}
+	}
+	int end = store[n];
+	for(i = 1;i <= n;i++)vl[i] = ve[end];
+	for(i = n - 1;i > 0;i--){
+		int j = store[i];
+		edgenode *p = list[j].head->next;
+		while(p){
+			if(vl[p->index] - p->val < vl[j])vl[j] = vl[p->index] - p->val;
+			p = p->next;
+		}
+	}
+	for(int i = 1;i <= n;i++){
+		edgenode *p = list[store[i]].head->next;
+		while(p){
+			int j = store[i],k = p->index;
+			int e = ve[j];
+			int l = vl[k] - p->val;
+			if(l == e){
+				edgenode *q = new edgenode;
+				q->index = k;
+				edgenode *temp = list2[j].head;
+				while(temp->next && temp->next->index < k)temp = temp->next;
+				q->next = temp->next;
+				temp->next = q;
+				count++;
+			}
+			p = p->next;
+		}
+	}
+	cout<<ve[end]<<endl;
+}
+void show(vlist list,int n,int count){
+	int k = 0;
+	for(int i = 1;i <= n && k < count;i++){
+		edgenode *p = list[i].head->next;
+		while(p){
+			cout<<i<<"->"<<p->index<<endl;
+			k++;
+			p = p->next;
+		}
+	}
+}
+int main(void){
+	int n,e;
+	while(cin>>n>>e){
+		vlist list,list2;
+		int store[1000];
+		int i,count1 = 0;
+		int count[1000] = {0};
+		qnode *head = new qnode;
+		head->next = NULL;
+		qnode *tail = head;
+		for(i = 1;i <= n;i++){
+			list[i].head = new edgenode;
+			list[i].head->next = NULL;
+			list2[i].head = new edgenode;
+			list2[i].head->next = NULL;
+		}
+		create(list,e,count);
+		int flag = topsort(list,count,n,head,tail,store);
+		if(flag){
+			criticalpath(list,store,n,list2,count1);
+			show(list2,n,count1);
+		}
+	}	
+	return 0;
+}
