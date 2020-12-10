@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <iostream>
+#include <stdlib.h>
+using namespace std;
+typedef struct
+{
+    int vNum,eNum;
+    int weight[1000][1000];
+    int path[1000][1000];
+}Graph;
+
+Graph* create(int vNum,int eNum)
+{
+    int a,b,weight;
+    Graph* G=new Graph;
+    G->eNum=eNum;
+    G->vNum=vNum;
+    for(int i=0;i<vNum;i++){
+        for(int j=0;j<vNum;j++){
+            G->path[i][j]=-1;
+            if(i == j)G->weight[i][j] = 0;            
+            else{
+            	G->weight[i][j] = 1e8;
+            }
+        }
+    }
+    for(int i=0;i<eNum;i++)
+    {
+        scanf("%d%d%d",&a,&b,&weight);
+        G->weight[a][b]=-1*weight;
+        G->path[a][b]=b;                             
+    }
+    return G;
+}
+void find(Graph *G,int i,int j,int k){
+	int m = i;
+	while(G->path[m][j] == G->path[m][k]){
+		m = G->path[m][j] ;
+	}
+	if(G->path[m][j] > G->path[m][k] )G->path[m][j] = G->path[m][k];
+	else G->path[m][j] = G->path[m][k];  
+}
+void Floyd(Graph* G)
+{
+    int i,j,k;
+    for(k=0;k<G->vNum;k++)
+        for(i=0;i<G->vNum;i++)
+            for(j=0;j<G->vNum;j++)
+                if(i!=k&&j!=k&&i != j){
+                    if(G->weight[i][k]+G->weight[k][j]<G->weight[i][j]){                 
+                        G->weight[i][j]=G->weight[i][k]+G->weight[k][j];
+                        G->path[i][j]=G->path[i][k];
+                    }
+                    else if(G->weight[i][k]+G->weight[k][j]==G->weight[i][j]){
+                    	int m = i;
+						/*while(G->path[m][j] == G->path[m][k]){
+							m = G->path[m][j] ;
+						}*/
+						if(G->path[m][j] > G->path[m][k] )G->path[m][j] = G->path[m][k];
+                    }
+                    
+                }
+}
+void longPath(Graph* G,int a,int b)       
+{
+    if(G->path[a][b] == -1)cout<<"none";
+    else{
+    	int m = a;
+    	cout<<a<<"->";
+    	while(G->path[m][b] != b){
+    		cout<<G->path[m][b]<<"->";
+    		m = G->path[m][b];
+    	}
+    	cout<<b;
+    }
+}
+int main()
+{
+    int a,b;
+    scanf("%d%d",&a,&b);
+    Graph* G=create(a,b);
+    Floyd(G);
+    scanf("%d%d",&a,&b);
+    longPath(G,a,b);
+    return 0;
+}
