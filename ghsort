@@ -1,0 +1,60 @@
+#include<stdio.h>
+#define max 1000000000
+int sum=0;
+int com(int *arr,int n,int m)
+{
+        int i=n;int j=m+1;
+        while(i<j)
+        {
+         i=i+1;
+        while(arr[i]<=arr[n])
+        {
+            i=i+1;
+        }
+            j--;
+        while(arr[j]>arr[n])
+        {
+            j=j-1;
+        }
+           if(i<j)
+           {
+               int temp=arr[i];
+               arr[i]=arr[j];
+               arr[j]=temp;
+           }
+        }
+        int temp=arr[n];
+       arr[n]=arr[j];
+    arr[j]=temp;
+    return j;
+}
+void qsort(int *arr,int n,int m)
+{
+    if(n<m)
+    {
+        int j=com(arr,n,m);
+        for (int i = 0; i < sum; i++)
+	{
+		printf("%d ", arr[i]);
+	}
+	printf("\n");
+        qsort(arr,n,j-1);
+        qsort(arr,j+1,m);
+    }
+}
+int main()
+{
+    int arr[2000];
+    scanf("%d",&sum);
+    for(int i=0;i<sum;i++)
+    {
+        scanf("%d",&arr[i]);
+    }
+    arr[sum]=max;
+    qsort(arr,0,sum-1);
+      for (int i = 0; i < sum; i++)
+	{
+		printf("%d ", arr[i]);
+	}
+    return 0;
+}
