@@ -1,0 +1,75 @@
+
+#include<iostream>
+using namespace std;
+int path1[10000],flag = 0,Flag = 0,max1 = 0;
+typedef struct edgenode{
+	int index;
+	int val;
+	edgenode *next;
+}edgenode;
+typedef struct vnode{
+	edgenode *head;
+}vnode,vlist[1000];
+void create(vlist list,int e){
+	int i,num,ind,val1;
+	edgenode *q = new edgenode;
+	for(i = 0;i < e;i++){
+		scanf("%d%d%d",&num,&ind,&val1);
+		edgenode *p = new edgenode;
+		q = list[num].head;
+		p->index = ind;
+		p->val = val1;
+		while(q->next && p->index > q->next->index)q = q->next;
+		p->next = q->next;
+		q->next = p;
+	}
+}
+
+void find(vlist list,int start,int end,int sum,int *path,int temp,int val){
+	path[++temp] = start;
+	sum += val;
+	edgenode *p = list[start].head->next;
+	if(start == end){
+		if(sum > max1){
+			for(int i = 0;i <= temp;i++){
+				path1[i] = path[i];
+			} 
+			flag = temp;
+			max1 = sum;
+			Flag = 1;
+		}
+	}
+	else{
+		while(p){
+			val = p->val;
+			start = p->index; 
+			find(list,start,end,sum,path,temp,val);
+			p = p->next;
+		}
+	}
+}
+int main(void){
+	int n,e;
+	cin>>n>>e;
+	vlist list;
+	int i;
+	for(i = 0;i < n;i++){
+		list[i].head = new edgenode;
+		list[i].head->next = NULL;
+	}
+	create(list,e);
+	int start,end;
+	cin>>start>>end;
+	int sum = 0;
+	int path[10000];
+	int temp = -1,val = 0;
+	find(list,start,end,sum,path,temp,val);
+	if(Flag){
+		cout<<start;
+		for(i = 1;i <= flag;i++){
+			cout<<"->"<<path1[i];
+		}
+	}
+	else cout<<"none";
+	return 0;
+}
