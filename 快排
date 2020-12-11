@@ -18,11 +18,13 @@ int apart(int *sort,int start,int end){
 	sort[start] = p;
 	return j;
 }
-void quicksort(int *sort,int left,int right){
+void quicksort(int *sort,int left,int right,int n){
 	if(left < right){
-		int j = apart(sort,left,right);
-		quicksort(sort,left,j-1);
-		quicksort(sort,j+1,right);
+		int j = apart(sort,left,right),i;
+		for(i = 0;i < n;i++)printf("%d ",sort[i]);
+		printf("%d");
+		quicksort(sort,left,j-1,n);
+		quicksort(sort,j+1,right,n);
 	}
 	return;
 }
@@ -31,7 +33,7 @@ int main(void){
 	scanf("%d",&n);
 	for(i = 0;i < n;i++)scanf("%d",&sort[i]);
 	sort[n] = inf;
-	quicksort(sort,0,n);
+	quicksort(sort,0,n-1,n);
 	for(i = 0;i < n;i++)printf("%d ",sort[i]);
 	return 0;
 }
