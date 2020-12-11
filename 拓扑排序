@@ -1,0 +1,90 @@
+
+#include<iostream>
+using namespace std;
+typedef struct edgenode{
+	int index;
+	int val;
+	edgenode *next;
+}edgenode;
+typedef struct vnode{
+	edgenode *head;
+}vnode,vlist[1000];
+typedef struct qnode{
+	int data;
+	qnode *next;
+}qnode;
+void create(vlist list,int e,int *count){
+	int i,num1,ind;
+	for(i = 0;i < e;i++){
+		cin>>num1>>ind;
+		edgenode *p = new edgenode;
+		p->index = ind;
+		p->next = list[num1].head->next;
+		list[num1].head->next = p;
+		count[ind]++;
+	}
+	return;
+}
+void topsort(vlist list,int *count,int n,qnode *head,qnode *tail,int *store){
+	int i,j = 0;
+	for(i = 1;i <= n;i++){
+		if(count[i] == 0){
+			qnode *p = new qnode;
+			p->data = i;
+			p->next = tail->next;
+			tail->next = p;
+			tail = p;
+		}
+	}
+	int k;
+	for(k = 1;k <= n;k++){
+		if(head == tail){
+			cout<<"unworkable project"<<endl;
+			return;
+		}
+		else{
+			store[++j] = head->next->data;
+			head->next = head->next->next;
+			if(head->next == NULL)tail = head;
+			int num1 = store[j];
+			edgenode *p = list[num1].head->next;
+			while(p){
+				count[p->index]--;
+				if(count[p->index] == 0){
+					qnode *q = new qnode;
+					q->data = p->index;
+					qnode *temp = head;
+					//while(temp->next && temp->next->data < q->data)temp = temp->next;
+					q->next = temp->next;
+					if(temp == tail)tail = q;
+					temp->next = q;
+				}
+				p = p->next;
+			}
+		}
+	}
+	return;
+}
+	for(int i = 0;i <= j;i++){
+		cout<<store[i]<<' ';
+	}
+}
+int main(void){
+	int n,e;
+	cin>>n>>e;
+	vlist list1;
+	int store[1000];
+	int i;
+	int count[1000] = {0};
+	int visit[1000] = {0};
+	qnode *head = new qnode;
+	head->next = NULL;
+	qnode *tail = head;
+	for(i = 0;i < n;i++){
+		list1[i].head = new edgenode;
+		list1[i].head->next = NULL;
+	}
+	create(list1,e,count);
+	topsort(list1,count,n,head,tail,store);
+	return 0;
+}
