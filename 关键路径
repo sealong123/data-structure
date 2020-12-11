@@ -45,7 +45,7 @@ int topsort(vlist list,int *count,int n,qnode *head,qnode *tail,int *store){
 		else{
 			store[++j] = head->next->data;
 			head->next = head->next->next;
-			if(head->next == NULL)tail = head;
+			if(head->next == NULL)tail = head;                                                             //队列的出队一定要判断队列是否为空。
 			int num1 = store[j];
 			edgenode *p = list[num1].head->next;
 			while(p){
@@ -54,7 +54,7 @@ int topsort(vlist list,int *count,int n,qnode *head,qnode *tail,int *store){
 					qnode *q = new qnode;
 					q->data = p->index;
 					qnode *temp = head;
-					while(temp->next && temp->next->data < q->data)temp = temp->next;
+					//while(temp->next && temp->next->data < q->data)temp = temp->next;               可加可不加。
 					q->next = temp->next;
 					if(temp == tail)tail = q;
 					temp->next = q;
