@@ -53,10 +53,10 @@ void Floyd(Graph* G)
                     }
                     else if(G->weight[i][k]+G->weight[k][j]==G->weight[i][j]){
                     	int m = i;
-						/*while(G->path[m][j] == G->path[m][k]){
-							m = G->path[m][j] ;
-						}*/
-						if(G->path[m][j] > G->path[m][k] )G->path[m][j] = G->path[m][k];
+			/*while(G->path[m][j] == G->path[m][k]){                              //重复求解了。。。加了while可能会超时。如果相等的话，在后面的循环中会求解。
+				m = G->path[m][j] ;
+			}*/
+			if(G->path[m][j] > G->path[m][k] )G->path[m][j] = G->path[m][k];
                     }
                     
                 }
