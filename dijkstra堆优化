@@ -1,0 +1,72 @@
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+#include<queue>
+
+using namespace std;
+
+const int N = 2510,inf = 0x3f3f3f3f,C = 6210;
+
+typedef pair<int,int>pp;
+
+class cmp{
+    public:
+        bool operator() (pp a,pp b){
+            return b.second <= a.second;
+        }
+};
+
+struct node{
+    int to,w,next;
+}edge[2*C];
+
+int head[N],v[N],d[N];
+int cnt = 0;
+int n,m;
+
+void add(int a,int b,int c){
+    edge[cnt].to = b;
+    edge[cnt].w = c;
+    edge[cnt].next = head[a];
+    head[a] = cnt++;
+}
+
+void dijkstra(int sv){
+    memset(d,0x3f,sizeof d);
+    d[sv] = 0;
+    int a = sv;
+    priority_queue< pp,vector<pp>,cmp > q;
+    q.push({a,d[a]});
+    while(!q.empty()){
+        auto h = q.top();
+        q.pop();
+        if(v[h.first])continue;                  //某一个结点可能被不同点更新，会多次入队，故需要排重。
+        v[h.first] = 1;
+        for(int i = head[h.first];~i;i = edge[i].next){
+            int b = edge[i].w,c = edge[i].to;
+            if(h.second + b < d[c]){
+                d[c] = h.second+b;
+                q.push({c,d[c]});
+            }
+        }
+    }
+    
+}
+int main(){
+    int sv,ev;
+    cin>>n>>m>>sv>>ev;
+    for(int i = 0;i < N;i++){
+        head[i] = -1;
+        edge[i].next = -1;
+    }
+    for(int i = 0;i < m;i++){
+        int from,to,w;
+        cin>>from>>to>>w;
+        add(from,to,w);
+        add(to,from,w);
+    }
+    dijkstra(sv);
+    cout<<d[ev]<<endl;
+    return 0;
+}
+
