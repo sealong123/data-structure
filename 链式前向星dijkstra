@@ -1,0 +1,67 @@
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+#include<vector>
+
+using namespace std;
+
+const int N = 2510,inf = 0x3f3f3f3f,C = 6210;
+
+struct node{
+    int to,w,next;
+}edge[2*C];
+
+int head[N],v[N],d[N];
+int cnt = 0;
+int n,m;
+void add(int a,int b,int c){
+    edge[cnt].to = b;
+    edge[cnt].w = c;
+    edge[cnt].next = head[a];
+    head[a] = cnt++;
+}
+
+void dijkstra(int sv){
+    memset(d,0x3f,sizeof d);
+    d[sv] = 0;
+    int a = sv,k = n-1;
+    while(k--){
+        v[a] = 1;
+        for(int i = head[a];~i;i = edge[i].next){
+            int b = edge[i].w,c = edge[i].to;
+            if(d[a] + b < d[c]){
+                d[c] = d[a]+b;
+            }
+        }
+        int minv = inf;
+        for(int i = 1;i <= n;i++){
+            if(d[i] < minv && !v[i]){
+                minv = d[i];
+                a = i;
+            }
+        }
+        //cout<<a<<endl;
+        if(minv == inf)break;
+    }
+    
+}
+int main(){
+    int sv,ev;
+    cin>>n>>m>>sv>>ev;
+    for(int i = 0;i < N;i++){
+        head[i] = -1;
+        edge[i].next = -1;
+    }
+    for(int i = 0;i < m;i++){
+        int from,to,w;
+        cin>>from>>to>>w;
+        add(from,to,w);
+        add(to,from,w);
+    }
+    /*cout<<head[5]<<endl;
+    cout<<edge[head[5]].next<<endl;
+    cout<<edge[18].w<<endl;*/
+    dijkstra(sv);
+    cout<<d[ev]<<endl;
+    return 0;
+}
