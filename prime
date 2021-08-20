@@ -1,0 +1,44 @@
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+
+using namespace std;
+
+const int N = 110,inf = 0x3f3f3f3f;
+
+int g[N][N],d[N],v[N];
+int n,ans = 0,cnt = 0;
+
+int prime(){
+    memset(d,0x3f,sizeof d);                      //每个点距离当前连通块的距离
+    d[1] = 0;
+    int t = -1,minv ;                           //cnt表示当前连通块内的点数，t表示距离当前连通块最短距离的点
+    for(int k = 0;k < n;k++){                         //需要加入n个点，故有k次循环
+        minv = 0x3f3f3f3f;
+        for(int i = 1;i <= n;i++){
+            if(!v[i] && d[i] < minv){             //寻找距离当前连通块的距离最短的点
+                minv = d[i];
+                t = i;
+            }
+        }
+        if(minv != inf){
+            ans += minv;
+            cnt++;
+            v[t] = 1;
+        }
+        for(int i = 1;i <= n;i++)
+            if(v[i])continue;
+            else d[i] = min(d[i],g[t][i]);
+    }
+    return ans;
+}
+
+int main(){
+    cin>>n;
+    for(int i = 1;i <= n;i++)
+        for(int j = 1;j <= n;j++)
+            cin>>g[i][j];
+    prime();
+    if(cnt == n)cout<<ans<<endl;
+    return 0;
+}
